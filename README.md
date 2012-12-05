@@ -64,7 +64,7 @@ Both the framework and the sample application use ARC.
 
 ## Contact
 
-Please contact [Damien](damien@realmacsoftware.com) regarding this project.
+Please contact [Damien](mailto:damien@realmacsoftware.com) regarding this project.
 
 ## License
 
