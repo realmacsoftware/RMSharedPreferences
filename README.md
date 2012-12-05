@@ -12,7 +12,7 @@ See this [post](http://realmacsoftware.com/blog/shared-preferences-between-sandb
 
 A sample application showing `RMSharedUserDefaults` in action is provided.  
 It is compounded of a Main and a Helper target, both being applications. Main is precisely the main application and Helper is a helper application, bundled with the main one under `Contents/Library/LoginItems`.  
-Both applications are sandboxed and use the same group identifier for `com.apple.security.application-groups` entitlement (which mean they share a common folder outside of their sandbox under `~/Library/Group Containers/XYZABC1234.com.realmacsoftware.sharedpreferences)`.
+Both applications are sandboxed and use the same group identifier for `com.apple.security.application-groups` entitlement (which mean they share a common folder outside of their sandbox under `~/Library/Group Containers/XYZABC1234.com.realmacsoftware.dts.sharedpreferences)`.
 
 Each application has a very simple UI with a single `NSTextField` that is bound, in one way or another to a value in `RMSharedUserDefaults` for a given default key.  
 The main application also has a couple of buttons to launch and kill the helper application by using the `SMLoginItemSetEnabled` function from the ServiceManagement framework. This is not actually required and the helper application could well be launched on its own. It just makes things easier!

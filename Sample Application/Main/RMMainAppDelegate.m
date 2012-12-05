@@ -29,7 +29,7 @@
 
 #import "SharedPreferences-Constants.h"
 
-static NSString * const RMSharedPreferencesHelperBundleIdentifier = @"com.realmacsoftware.sharedpreferences.helper";
+static NSString * const RMSharedPreferencesHelperBundleIdentifier = @"com.realmacsoftware.dts.sharedpreferences.helper";
 
 @implementation RMMainAppDelegate
 
