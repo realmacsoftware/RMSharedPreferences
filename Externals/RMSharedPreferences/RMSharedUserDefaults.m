@@ -106,9 +106,9 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 	[_synchronizationQueue setMaxConcurrentOperationCount:1];
 	[_synchronizationQueue setName:[queuePrefixName stringByAppendingFormat:@".synchronization"]];
 	
-	[NSFileCoordinator addFilePresenter:self];
-	
 	[self _synchronize];
+	
+	[NSFileCoordinator addFilePresenter:self];
 	
 	return self;
 }
@@ -315,13 +315,6 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 	NSDictionary *onDiskUserDefaultsDictionary = ([onDiskUserDefaults isKindOfClass:[NSDictionary class]] ? onDiskUserDefaults : nil);
 	
 	NSDictionary *userDefaultsDictionary = [NSDictionary dictionaryWithDictionary:onDiskUserDefaultsDictionary];
-	
-	/*
-		If there are no local updates, simply return the up-to-date on-disk defaults
-	 */
-	if ([userDefaultsUpdatesDictionary count] == 0) {
-		return userDefaultsDictionary;
-	}
 	
 	/*
 		Update with the local values, if needed
