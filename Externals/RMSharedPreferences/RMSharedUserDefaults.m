@@ -322,6 +322,13 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 	userDefaultsDictionary = [self _dictionary:userDefaultsDictionary byApplyingChanges:userDefaultsUpdatesDictionary];
 	
 	/*
+		If there are no local updates and we already have a file on disk, simply return the up-to-date on-disk defaults
+	 */
+	if (([userDefaultsUpdatesDictionary count] == 0) && (onDiskUserDefaults != nil)) {
+		return userDefaultsDictionary;
+	}
+	
+	/*
 		Safely replace the plist on disk
 	 */
 	NSData *userDefaultsDictionaryData = [NSPropertyListSerialization dataWithPropertyList:userDefaultsDictionary format:NSPropertyListXMLFormat_v1_0 options:(NSPropertyListWriteOptions)0 error:NULL];
