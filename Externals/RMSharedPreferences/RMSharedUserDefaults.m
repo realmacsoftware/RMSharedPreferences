@@ -147,15 +147,15 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 	__block id object = nil;
 	
 	[self _lock:[self accessorLock] criticalSection:^ {
-		object = [self updatedUserDefaultsDictionary][defaultName];
+		object = [[self updatedUserDefaultsDictionary] objectForKey:defaultName];
 		if (object != nil) {
 			return;
 		}
-		object = [self userDefaultsDictionary][defaultName];
+		object = [[self userDefaultsDictionary] objectForKey:defaultName];
 		if (object != nil) {
 			return;
 		}
-		object = [self registeredUserDefaultsDictionary][defaultName];
+		object = [[self registeredUserDefaultsDictionary] objectForKey:defaultName];
 	}];
 	
 	return object;
@@ -368,7 +368,7 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 	NSSet *userDefaultsUpdatesFromDisk = [self _keyDiffsBetweenDictionaries:userDefaultsDictionary :[self userDefaultsDictionary]];
 	
 	[userDefaultsUpdatesFromDisk enumerateObjectsUsingBlock:^ (NSString *defaultName, BOOL *stop) {
-		id value = userDefaultsDictionary[defaultName] ? : [NSNull null];
+		id value = [userDefaultsDictionary objectForKey:defaultName] ? : [NSNull null];
 		[userDefaultsChanges setObject:value forKey:defaultName];
 	}];
 	
