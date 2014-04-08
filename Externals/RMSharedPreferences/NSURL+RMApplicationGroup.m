@@ -23,38 +23,32 @@
 
 #import "NSURL+RMApplicationGroup.h"
 
-#import <Security/Security.h>
+#import <Security/SecCode.h>
 #import <pwd.h>
 
 @implementation NSURL (RMApplicationGroup)
 
 + (NSString *)defaultGroupContainerIdentifier
 {
-	SecTaskRef task = NULL;
-	
-	NSString *applicationGroupIdentifier = nil;
-	do {
-		task = SecTaskCreateFromSelf(kCFAllocatorDefault);
-		if (task == NULL) {
-			break;
-		}
-		
-		CFTypeRef applicationGroupIdentifiers = SecTaskCopyValueForEntitlement(task, CFSTR("com.apple.security.application-groups"), NULL);
-		if (applicationGroupIdentifiers == NULL || CFGetTypeID(applicationGroupIdentifiers) != CFArrayGetTypeID() || CFArrayGetCount(applicationGroupIdentifiers) == 0) {
-			break;
-		}
-		
-		CFTypeRef firstApplicationGroupIdentifier = CFArrayGetValueAtIndex(applicationGroupIdentifiers, 0);
-		if (CFGetTypeID(firstApplicationGroupIdentifier) != CFStringGetTypeID()) {
-			break;
-		}
-		
-		applicationGroupIdentifier = (__bridge NSString *)firstApplicationGroupIdentifier;
-	} while (0);
-	
-	if (task != NULL) {
-		CFRelease(task);
-	}
+    NSString* applicationGroupIdentifier = nil;
+
+    SecCodeRef selfCode = NULL;
+    SecCodeCopySelf(kSecCSDefaultFlags, &selfCode);
+
+    if (selfCode)
+    {
+        CFDictionaryRef cfDic = NULL;
+        SecCodeCopySigningInformation(selfCode, kSecCSRequirementInformation, &cfDic);
+        NSDictionary* signingDic = CFBridgingRelease(cfDic);
+
+        NSDictionary* entitlementsDic = [signingDic objectForKey:@"entitlements-dict"];
+        NSArray* appGroupsArray = [entitlementsDic objectForKey:@"com.apple.security.application-groups"];
+
+        if ([appGroupsArray isKindOfClass:[NSArray class]] && appGroupsArray.count > 0)
+            applicationGroupIdentifier = [appGroupsArray objectAtIndex:0];
+
+        CFRelease(selfCode);
+    }
 	
 	return applicationGroupIdentifier;
 }

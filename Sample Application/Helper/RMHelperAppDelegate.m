@@ -41,10 +41,10 @@
 
 - (void)preferencesDidUpdate:(NSNotification *)notification
 {
-	NSString *defaultName = [notification userInfo][RMSharedUserDefaultsDidChangeDefaultNameKey];
+	NSString *defaultName = [[notification userInfo] objectForKey:RMSharedUserDefaultsDidChangeDefaultNameKey];
 	
 	if ([defaultName isEqualToString:RMSharedPreferencesSomeTextDefaultKey]) {
-		NSString *text = [notification userInfo][RMSharedUserDefaultsDidChangeDefaulValueKey];
+		NSString *text = [[notification userInfo]objectForKey:RMSharedUserDefaultsDidChangeDefaulValueKey];
 		[self _updateTextField:text];
 	}
 }

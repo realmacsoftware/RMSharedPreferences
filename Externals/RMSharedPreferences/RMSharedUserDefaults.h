@@ -37,6 +37,8 @@
  */
 - (id)initWithApplicationGroupIdentifier:(NSString *)applicationGroupIdentifier;
 
+- (id) initWithSharedFileURL:(NSURL *)fileURL;
+
 @end
 
 extern NSString * const RMSharedUserDefaultsDidChangeDefaultNameKey;
