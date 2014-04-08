@@ -206,7 +206,7 @@
 			};
 			buildConfigurationList = 6D74A055166373B400D70B8F /* Build configuration list for PBXProject "RMSharedPreferences" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = en-GB;
+			developmentRegion = "en-GB";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,

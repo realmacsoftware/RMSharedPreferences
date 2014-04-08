@@ -74,11 +74,6 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 
 - (id)initWithApplicationGroupIdentifier:(NSString *)applicationGroupIdentifier
 {
-	self = [super initWithUser:nil];
-	if (self == nil) {
-		return nil;
-	}
-	
 	NSURL *applicationGroupLocation = [NSURL containerURLForSecurityApplicationGroupIdentifier:applicationGroupIdentifier];
 	if (applicationGroupLocation == nil) {
 		@throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"A default application group identifier cannot be found in the entitlements" userInfo:nil];
@@ -89,27 +84,49 @@ NSString * const RMSharedUserDefaultsDidChangeDefaulValueKey = @"RMSharedUserDef
 	[[NSFileManager defaultManager] createDirectoryAtURL:applicationGroupPreferencesLocation withIntermediateDirectories:YES attributes:nil error:NULL];
 	
 	NSString *userDefaultsDictionaryFileName = applicationGroupIdentifier ? : [NSURL defaultGroupContainerIdentifier];
-	_userDefaultsDictionaryLocation = [[applicationGroupPreferencesLocation URLByAppendingPathComponent:userDefaultsDictionaryFileName] URLByAppendingPathExtension:@"plist"];
-	
+	NSURL* defaultsLocation = [[applicationGroupPreferencesLocation URLByAppendingPathComponent:userDefaultsDictionaryFileName] URLByAppendingPathExtension:@"plist"];
+
+	self = [self initWithSharedFileURL:defaultsLocation];
+	if (self == nil) {
+		return nil;
+	}
+
+	return self;
+}
+
+- (id) initWithSharedFileURL:(NSURL *)fileURL
+{
+	self = [super initWithUser:nil];
+	if (self == nil) {
+		return nil;
+	}
+
+	if ( ! fileURL) {
+		@throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Shared defaults file name not specified" userInfo:nil];
+		return nil;
+	}
+
+	_userDefaultsDictionaryLocation = fileURL;
+
 	_updatedUserDefaultsDictionary = [NSMutableDictionary dictionary];
 	_registeredUserDefaultsDictionary = [NSMutableDictionary dictionary];
-	
+
 	_accessorLock = [[NSRecursiveLock alloc] init];
 	_synchronizeLock = [[NSLock alloc] init];
-	
-	NSString *queuePrefixName = [applicationGroupIdentifier stringByAppendingFormat:@".sharedpreferences"];
-	
+
+	NSString *queuePrefixName = [fileURL.lastPathComponent stringByAppendingFormat:@".sharedpreferences"];
+
 	_fileCoordinationOperationQueue = [[NSOperationQueue alloc] init];
 	[_fileCoordinationOperationQueue setName:[queuePrefixName stringByAppendingFormat:@".filecoordination"]];
-	
+
 	_synchronizationQueue = [[NSOperationQueue alloc] init];
 	[_synchronizationQueue setMaxConcurrentOperationCount:1];
 	[_synchronizationQueue setName:[queuePrefixName stringByAppendingFormat:@".synchronization"]];
-	
+
 	[self _synchronize];
-	
+
 	[NSFileCoordinator addFilePresenter:self];
-	
+
 	return self;
 }
 

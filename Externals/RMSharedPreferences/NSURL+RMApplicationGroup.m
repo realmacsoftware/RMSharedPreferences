@@ -30,31 +30,22 @@
 
 + (NSString *)defaultGroupContainerIdentifier
 {
-	SecTaskRef task = NULL;
-	
-	NSString *applicationGroupIdentifier = nil;
-	do {
-		task = SecTaskCreateFromSelf(kCFAllocatorDefault);
-		if (task == NULL) {
-			break;
-		}
-		
-		CFTypeRef applicationGroupIdentifiers = SecTaskCopyValueForEntitlement(task, CFSTR("com.apple.security.application-groups"), NULL);
-		if (applicationGroupIdentifiers == NULL || CFGetTypeID(applicationGroupIdentifiers) != CFArrayGetTypeID() || CFArrayGetCount(applicationGroupIdentifiers) == 0) {
-			break;
-		}
-		
-		CFTypeRef firstApplicationGroupIdentifier = CFArrayGetValueAtIndex(applicationGroupIdentifiers, 0);
-		if (CFGetTypeID(firstApplicationGroupIdentifier) != CFStringGetTypeID()) {
-			break;
-		}
-		
-		applicationGroupIdentifier = (__bridge NSString *)firstApplicationGroupIdentifier;
-	} while (0);
-	
-	if (task != NULL) {
-		CFRelease(task);
-	}
+    NSString *applicationGroupIdentifier = nil;
+	SecTaskRef task = SecTaskCreateFromSelf(kCFAllocatorDefault);
+
+    if (task)
+    {
+        NSArray* applicationGroupIDs = CFBridgingRelease(SecTaskCopyValueForEntitlement(task, CFSTR("com.apple.security.application-groups"), NULL));
+
+        if ([applicationGroupIDs isKindOfClass:[NSArray class]] && applicationGroupIDs.count)
+        {
+            NSString* firstID = [applicationGroupIDs objectAtIndex:0];
+            if ([firstID isKindOfClass:[NSString class]])
+                applicationGroupIdentifier = firstID;
+        }
+
+        CFRelease(task);
+    }
 	
 	return applicationGroupIdentifier;
 }
